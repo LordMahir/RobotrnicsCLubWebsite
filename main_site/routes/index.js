@@ -9,6 +9,7 @@ var nodeMailer = require('nodemailer');
 var config = require('config');
 
 var async = require('async');
+var issues = require('../models/issues');
 
 /* Middleware Function to check is Logged in */
 // For use where Admin login is required
@@ -414,7 +415,7 @@ router.post('/issues/create', function (req, res, next) {
   var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
   var yyyy = today.getFullYear();
 
-  console.log(req.body);
+  // console.log(req.body);
 
   var component = new Issues(
     {
@@ -426,14 +427,7 @@ router.post('/issues/create', function (req, res, next) {
       items: req.body.items // This should be in the form of HashMap
     }
   );
-  Inventory.updateOne({name:"motor"},{available:10},function(err,result){
-    if(err){
-      res.send(err);
-    }
-    else{
-      res.send(result);
-    }
-  });
+
   component.save(function (err) {
     if (err) {
       console.log(err);
@@ -467,15 +461,22 @@ router.post('/issues/myissues', function(req, res, next) {
  * isLoggedIn ensures that admin is working
  */
 router.post('/issues/all', isLoggedIn, function(req, res, next) {
-  Issues.find({}).sort({date_of_issue: 'descending'}).exec(function (err, result) {
+  Issues.find().sort({date_of_issue: 'descending'}).exec(function (err, result) {
     if (err) {
       console.log(err);
       res.json({ success: 0, msg: (err.toString())});
     }
-    //console.log(result);
+    // console.log(result[0]);
     res.json({success: 1, msg: result});
   });
 });
+
+router.route('/:id').get((req, res) => {
+  Issues.findById(req.params.id)
+    .then(issues => res.json(issues))
+    .catch(err => res.status(400).json('Error: ' + err));
+});
+
 
 // API to accept the return request
 router.post('/issues/:id/accept', isLoggedIn, function (req, res, next) {
@@ -488,8 +489,48 @@ router.post('/issues/:id/accept', isLoggedIn, function (req, res, next) {
   var component = {
       status: "Return-Pending",
       date_of_issue: yyyy + '-' + mm + '-' + dd, // Automatically set the date when issue is made,
-      _id: req.params.id
+      _id: req.params.id,
+      items: req.body.items
     };
+
+  console.log(component)
+  console.log("We should also update the inventory here!")
+  // var items = res.body.items;
+  // console.log(res.body);
+  // Components kya kya hai
+  // Inventory mei unko like kam karna
+
+  // router.route('/update/:id').post((req, res) => {
+  //   Exercise.findById(req.params.id)
+  //     .then(exercise => {
+  //       exercise.username = req.body.username;
+  //       exercise.description = req.body.description;
+  //       exercise.duration = Number(req.body.duration);
+  //       exercise.date = Date.parse(req.body.date);
+
+  //       exercise.save()
+  //         .then(() => res.json('Exercise updated!'))
+  //         .catch(err => res.status(400).json('Error: ' + err));
+  //     })
+  //     .catch(err => res.status(400).json('Error: ' + err));
+  // });
+
+  // router.post('/inventory/:id/update', function (req, res, next) {
+  //   var component = new Inventory(
+  //     {
+  //       name: req.body.name,
+  //       total: req.body.total,
+  //       available: req.body.available,
+  //       price: req.body.price,
+  //       _id: req.params.id
+  //     }
+  //   );
+  //   Inventory.findByIdAndUpdate(req.params.id, component, {}, function (err, thecomponent) {
+  //     if (err) { return next(err); }
+  //     res.redirect('../../admin');
+  //   });
+  // });
+  
 
   Issues.findByIdAndUpdate(req.params.id, component, {}, function (err, thecomponent) {
     if (err) { return next(err); }
@@ -504,6 +545,10 @@ router.post('/issues/:id/accept', isLoggedIn, function (req, res, next) {
  * Response: {success, msg}
  */
 router.post('/issues/:id/delete', function (req, res, next) {
+
+  // If component ka status is Return-Pending -> Update in inventory
+  // If Requested -> Simply delete
+
   Issues.findByIdAndRemove(req.params.id, function deleteComponent(err) {
     if (err) {
       console.log(err);
@@ -535,7 +580,7 @@ router.post('/issues/:id/update', function(req, res, next) {
       _id: req.params.id
     }
   );
-  // console.log(component);
+  console.log(component);
   
   Issues.findByIdAndUpdate(req.params.id, component, {}, function (err, thecomponent) {
     if (err) { res.json({ "success": 0, msg: (err.toString()) }) }

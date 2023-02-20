@@ -406,7 +406,7 @@
           if(this.readyState == 4 && this.status == 200){
             
             var resArr = JSON.parse(this.responseText).msg;
-            // console.log(resArr);
+            console.log(resArr);
 
             // Now update the UI very carefully in <div id="section-requests-components">
             var requestSection = document.getElementById('issue-list-container');
@@ -418,132 +418,136 @@
 
             for (var i=0; i < resArr.length; i++ ){
 
+              if (resArr[i].items !== null) {
+
               // Expand collpase button
-              var buttonExpandView = '<button '
-              + 'class="btn btn-info expand-collapse-btn" '
-              + 'onclick=expandTileById("' + resArr[i]._id + '") > '
-              + 'Expand '
-              + '</button>';
+                  var buttonExpandView = '<button '
+                  + 'class="btn btn-info expand-collapse-btn" '
+                  + 'onclick=expandTileById("' + resArr[i]._id + '") > '
+                  + 'Expand '
+                  + '</button>';
 
-              // Components data in the form of table
-              var componentsTableString = '<table class="table request-history-component-table">'
-                  + '<tbody>';
-                var itemsLength = resArr[i].items.length;
-                for(var key in resArr[i].items) {
-                  componentsTableString += '<tr>'
-                    + '<td>' + key + '</td>'
-                    + '<td>' + resArr[i].items[key] + '</td>'
-                    + '</tr>';
-                }
-                componentsTableString += '</tbody>'
-                 + '</table><hr>';
-                // console.log(componentsTableString);
+                  // Components data in the form of table
+                  var componentsTableString = '<table class="table request-history-component-table">'
+                      + '<tbody>';
+                    var itemsLength = resArr[i].items.length;
+                    for(var key in resArr[i].items) {
+                      componentsTableString += '<tr>'
+                        + '<td>' + key + '</td>'
+                        + '<td>' + resArr[i].items[key] + '</td>'
+                        + '</tr>';
+                    }
+                    componentsTableString += '</tbody>'
+                    + '</table><hr>';
+                    // console.log(componentsTableString);
 
 
-              if(resArr[i].status === "Requested" || resArr[i].status === "requested"){
-                
-                // These are the ones requested by students
-                requestSection.innerHTML += '<div id="' + resArr[i]._id + '" class="request-item-tile">'
-                + '<div class="row">'
-                  + '<div class="col">'
-                    + '<!-- Name -->'
-                    + resArr[i].name
-                  + '</div>'
-                  + '<div class="col">'
-                    + '<!-- Roll No -->'
-                    + resArr[i].email
-                  + '</div>'
-                  + '<div class="col">'
-                    + '<!-- Date -->'
-                    + resArr[i].date_of_issue.toString().substr(0,10)
-                  + '</div>'
-                  + '<div class="col">'
-                    + '<!-- Button to view -->'
-                    + buttonExpandView
-                  + '</div>'
-                + '</div>'
-                + '<div class="hidden-tile-view" style="margin-top: 10px; display: none;">'
-                  + '<!-- Table of Components -->'
-                  + componentsTableString
-                  + '<div class="row">'
-                      + '<!-- Some Helpful buttons-->'
-                      + '<div class="col">'
-                        + '<!-- Accept Button -->'
-                        + '<Button '
-                          + 'class="btn btn-success" style="margin: 10px;" '
-                          + 'onclick=acceptThisIssue("' + resArr[i]._id + '") >'
-                          + 'Accept'
-                        + '</button>'
-                      + '</div>'
-                      + '<div class="col">'
-                        + '<!-- Reject Button -->'
-                        + '<Button '
-                          + 'class="btn btn-danger" style="margin: 10px;" '
-                          + 'onclick=removeThisIssue("' + resArr[i]._id + '") >'
-                          + 'Reject'
-                        + '</button>'
-                      + '</div>'
-                      + '<div class="col">'
-                        + '<!-- Edit Button (To be added soon) -->'
-                        + '<Button '
-                          + 'class="btn btn-secondary" style="margin: 10px;" '
-                          + 'onclick=modalPrepare("' + resArr[i]._id + '") >'
-                          + 'Edit'
-                        + '</button>'
-                      + '</div>'
-                    + '</div>'
-                  + '</div>'
-                + '</div>';
-                
-              } else {
-                
-                // These are the ones which are actually issued and accepted that the items are issued
-                returnSection.innerHTML += '<div id="' + resArr[i]._id + '" class="request-item-tile">'
-                + '<div class="row">'
-                  + '<div class="col">'
-                    + '<!-- Name -->'
-                    + resArr[i].name
-                  + '</div>'
-                  + '<div class="col">'
-                    + '<!-- Roll No -->'
-                    + resArr[i].email
-                  + '</div>'
-                  + '<div class="col">'
-                    + '<!-- Date -->'
-                    + resArr[i].date_of_issue.toString().substr(0,10)
-                  + '</div>'
-                  + '<div class="col">'
-                    + '<!-- Button to view -->'
-                    + buttonExpandView
-                    + '</div>'
-                  + '</div>'
-                  + '<div class="hidden-tile-view" style="margin-top: 10px; display:none;">'
-                    + '<!-- Table of Components -->'
-                    + componentsTableString
+                  if(resArr[i].status === "Requested" || resArr[i].status === "requested"){
+                    
+                    // These are the ones requested by students
+                    requestSection.innerHTML += '<div id="' + resArr[i]._id + '" class="request-item-tile">'
                     + '<div class="row">'
-                      + '<!-- Some Helpful buttons-->'
                       + '<div class="col">'
-                        + '<!-- Remove Button -->'
-                        + '<Button '
-                          + 'class="btn btn-danger" style="margin: 10px;" '
-                          + 'onclick=removeThisIssue("' + resArr[i]._id + '") >'
-                          + 'Remove'
-                        + '</button>'
+                        + '<!-- Name -->'
+                        + resArr[i].name
                       + '</div>'
                       + '<div class="col">'
-                        + '<!-- Edit Button (To be added soon) -->'
-                        + '<Button '
-                          + 'class="btn btn-secondary" style="margin: 10px;" '
-                          + 'onclick=modalPrepare("' + resArr[i]._id + '") >'
-                          + 'Edit'
-                        + '</button>'
+                        + '<!-- Roll No -->'
+                        + resArr[i].email
+                      + '</div>'
+                      + '<div class="col">'
+                        + '<!-- Date -->'
+                        + resArr[i].date_of_issue.toString().substr(0,10)
+                      + '</div>'
+                      + '<div class="col">'
+                        + '<!-- Button to view -->'
+                        + buttonExpandView
                       + '</div>'
                     + '</div>'
-                  + '</div>'
-                + '</div>';
-              }
-
-            } // end of for loop
+                    + '<div class="hidden-tile-view" style="margin-top: 10px; display: none;">'
+                      + '<!-- Table of Components -->'
+                      + componentsTableString
+                      + '<div class="row">'
+                          + '<!-- Some Helpful buttons-->'
+                          + '<div class="col">'
+                            + '<!-- Accept Button -->'
+                            + '<Button '
+                              + 'class="btn btn-success" style="margin: 10px;" '
+                              + 'onclick=acceptThisIssue("' + resArr[i]._id + '") >'
+                              + 'Accept'
+                            + '</button>'
+                          + '</div>'
+                          + '<div class="col">'
+                            + '<!-- Reject Button -->'
+                            + '<Button '
+                              + 'class="btn btn-danger" style="margin: 10px;" '
+                              + 'onclick=removeThisIssue("' + resArr[i]._id + '") >'
+                              + 'Reject'
+                            + '</button>'
+                          + '</div>'
+                          + '<div class="col">'
+                            + '<!-- Edit Button (To be added soon) -->'
+                            + '<Button '
+                              + 'class="btn btn-secondary" style="margin: 10px;" '
+                              + 'onclick=modalPrepare("' + resArr[i]._id + '") >'
+                              + 'Edit'
+                            + '</button>'
+                          + '</div>'
+                        + '</div>'
+                      + '</div>'
+                    + '</div>';
+                    
+                  } else {
+                    
+                    // These are the ones which are actually issued and accepted that the items are issued
+                    returnSection.innerHTML += '<div id="' + resArr[i]._id + '" class="request-item-tile">'
+                    + '<div class="row">'
+                      + '<div class="col">'
+                        + '<!-- Name -->'
+                        + resArr[i].name
+                      + '</div>'
+                      + '<div class="col">'
+                        + '<!-- Roll No -->'
+                        + resArr[i].email
+                      + '</div>'
+                      + '<div class="col">'
+                        + '<!-- Date -->'
+                        + resArr[i].date_of_issue.toString().substr(0,10)
+                      + '</div>'
+                      + '<div class="col">'
+                        + '<!-- Button to view -->'
+                        + buttonExpandView
+                        + '</div>'
+                      + '</div>'
+                      + '<div class="hidden-tile-view" style="margin-top: 10px; display:none;">'
+                        + '<!-- Table of Components -->'
+                        + componentsTableString
+                        + '<div class="row">'
+                          + '<!-- Some Helpful buttons-->'
+                          + '<div class="col">'
+                            + '<!-- Remove Button -->'
+                            + '<Button '
+                              + 'class="btn btn-danger" style="margin: 10px;" '
+                              + 'onclick=removeThisIssue("' + resArr[i]._id + '") >'
+                              + 'Remove'
+                            + '</button>'
+                          + '</div>'
+                          + '<div class="col">'
+                            + '<!-- Edit Button (To be added soon) -->'
+                            + '<Button '
+                              + 'class="btn btn-secondary" style="margin: 10px;" '
+                              + 'onclick=modalPrepare("' + resArr[i]._id + '") >'
+                              + 'Edit'
+                            + '</button>'
+                          + '</div>'
+                        + '</div>'
+                      + '</div>'
+                    + '</div>';
+                  }
+                } 
+                // end of if statment
+          }
+          // end of for loop
 
           }
         }

@@ -195,7 +195,7 @@
               }
 
               // Items list ready
-              console.log(reqItems);
+              // console.log(reqItems);
 
               if (validReq) {
                 var xhttp = new XMLHttpRequest();
@@ -321,6 +321,7 @@
               xhttp.setRequestHeader("Content-Type", "application/json"); // Necessary for POST
 
               xhttp.send(JSON.stringify(reqbody));
+              console.log(reqbody);
 
             }
           
